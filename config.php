@@ -1,36 +1,42 @@
 <?php
-// Conectar ao banco de dados
-$host = "srv1595.hstgr.io"; // Altere conforme necessário
-$dbname = "agendamento";
-$username = "u870367221_Barber"; // Altere conforme necessário
-$password = "Deividlps120@"; // Altere conforme necessário
+// config.php
 
-$conn = new mysqli($host, $username, $password, $dbname);
+// Configurações do banco de dados
+$servername = "srv1595.hstgr.io"; // Endereço do servidor MySQL
+$username = "u870367221_Barber";  // Nome de usuário do banco de dados
+$password = "Deividlps120@";     // Senha do banco de dados
+$dbname = "u870367221_Barber";       // Nome do banco de dados
+
+// Cria a conexão
+$conn = new mysqli($servername, $username, $password, $dbname);
 
 // Verifica a conexão
 if ($conn->connect_error) {
-    die("Falha na conexão: " . $conn->connect_error);
+    die("Conexão falhou: " . $conn->connect_error);
 }
 
-// Verifica se o formulário foi enviado
+// Verifica se os dados foram enviados
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Coletar os dados do formulário
+    // Obtém os dados do formulário
     $dia = $_POST['dia'];
     $periodo = $_POST['periodo'];
     $horario = $_POST['horario'];
 
-    // Preparar e executar a inserção no banco de dados
+    // Prepara a consulta SQL para inserir os dados
     $stmt = $conn->prepare("INSERT INTO agendamentos (dia, periodo, horario) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $dia, $periodo, $horario);
+    $stmt->bind_param("sss", $dia, $periodo, $horario); // "sss" indica que todas as variáveis são strings
 
+    // Executa a consulta
     if ($stmt->execute()) {
-        echo "Agendamento realizado com sucesso!";
+        echo "<div class='message'>Agendamento realizado com sucesso!</div>";
     } else {
-        echo "Erro ao agendar: " . $stmt->error;
+        echo "<div class='message'>Erro: " . $stmt->error . "</div>";
     }
 
-    // Fechar a conexão
+    // Fecha a declaração
     $stmt->close();
-    $conn->close();
 }
+
+// Fecha a conexão
+$conn->close();
 ?>
